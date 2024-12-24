@@ -18,8 +18,7 @@ vim.api.nvim_create_user_command('CompileMode',
                 if cm ~= nil then
                     cm:call_cmd(input)
                     vim.g.compile_mode_last_cmd = input
-                    vim.g.compile_mode_ins = cm
-                    cm.win = vim.api.nvim_open_win(cm.buf, true, Compile.CM_WIN_OPTS) 
+                    cm.win = vim.api.nvim_open_win(cm.buf, true, Compile.CM_WIN_OPTS)
                 end
             end)
     end, {})
