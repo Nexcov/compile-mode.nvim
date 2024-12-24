@@ -78,8 +78,8 @@ function Compile:set_keymaps()
     end, { buffer = self.buf, silent = true })
 
     vim.keymap.set({ 'n', 'i' }, '<C-c>', function() 
-        self:kill_cmd(2)
-    end, { buffer = self.buf, silent = true })
+        self:kill_cmd("SIG")
+    end, { buffer = self.buf, silent = true, noremap = false })
 end
 
 function Compile:set_autocmds()
@@ -242,7 +242,7 @@ function Compile:call_cmd(cmd)
     vim.api.nvim_buf_set_name(self.buf, "*compilation* '"..cmd.."'")
     self.stdout = vim.uv.new_pipe()
     self.stderr = vim.uv.new_pipe()
-    self.handle, self.pid = vim.uv.spawn('sh', {
+    self.handle, self.pid = vim.uv.spawn('bash', {
         args = { '-c', cmd },
         cwd = vim.uv.cwd(),
         stdio = { nil, self.stdout, self.stderr },
