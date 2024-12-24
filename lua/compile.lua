@@ -129,30 +129,33 @@ function Compile:set_hl_marks(str, line, hl)
 end
 
 function Compile:handle_line(data)
-        -- Cant use '\n' symbol in buf_set_lines
-        local lines = vim.split(data, '\n')
-        for _, v in ipairs(lines) do
-            if v ~= '' then
-                vim.api.nvim_buf_set_lines(self.buf, -1, -1, false, { v })
-                self.cur_line = self.cur_line + 1
+    -- Cant use '\n' symbol in buf_set_lines
+    local lines = vim.split(data, '\n')
+    for _, v in ipairs(lines) do
+        if v ~= '' then
+            vim.api.nvim_buf_set_lines(self.buf, -1, -1, false, { v })
+            self.cur_line = self.cur_line + 1
+            if vim.api.nvim_get_current_win() == self.win then
+                vim.api.nvim_win_set_cursor(self.win, { self.cur_line + 1, 0 })
+            end
 
-                -- Search for file:row:col format
-                local fmt = v:match(REG_FORMAT)
-                if fmt then
-                    table.insert(self.errors, self.cur_line + 1)
-                    local hl = "CompilationRed"
-                    local low = v:lower()
+            -- Search for file:row:col format
+            local fmt = v:match(REG_FORMAT)
+            if fmt then
+                table.insert(self.errors, self.cur_line + 1)
+                local hl = "CompilationRed"
+                local low = v:lower()
 
-                    if low:match("warning") then
-                        hl = "CompilationBrown"
-                    elseif low:match("note") then
-                        hl = "CopilationGreen"
-                    end
-
-                    self:set_hl_marks(fmt, self.cur_line, hl)
+                if low:match("warning") then
+                    hl = "CompilationBrown"
+                elseif low:match("note") then
+                    hl = "CopilationGreen"
                 end
+
+                self:set_hl_marks(fmt, self.cur_line, hl)
             end
         end
+    end
 end
 
 function Compile:open_file(line, mode)
@@ -251,6 +254,9 @@ function Compile:call_cmd(cmd)
                 self.stderr:close()
                 self:handle_exit_code(code)
                 self.cmd_running = false
+                if vim.api.nvim_get_current_win() == self.win then
+                    vim.cmd('normal G')
+                end
             end)
         end)
 
