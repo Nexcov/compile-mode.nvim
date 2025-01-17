@@ -1,8 +1,8 @@
 local Compile = {}
 Compile.__index = Compile
 
-local REG_GROUPS = '^(.*):(%d+):(%d+):?'
-local REG_FORMAT = '^.*:%d+:%d+:?'
+local REG_GROUPS = '^(.*)[(:](%d+):(%d+)[:)]?'
+local REG_FORMAT = '^.*[(:]%d+:%d+[:)]?'
 
 Compile.CM_WIN_OPTS = { split = 'below'}
 --TODO: Get errors list in a quickfix and get that list in the compilation buffer
