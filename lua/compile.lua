@@ -159,13 +159,12 @@ function Compile:handle_line(data)
 end
 
 function Compile:open_file(line, mode)
-    -- Dont know why is that weird
     local str_l = vim.api.nvim_buf_get_lines(self.buf, line - 1, line, false)
     local format = str_l[1]:match(REG_FORMAT)
     if format then
         local file, row, col = format:match(REG_GROUPS)
         -- Dont know if this is slow
-        file = file:gsub("^[^%w/]+", ""):gsub("$[^%w]+", "")
+        file = file:gsub("^[^%w./]+", ""):gsub("$[^%w]+", "")
         if mode then
             vim.api.nvim_command(mode..'| e '..file)
         else
